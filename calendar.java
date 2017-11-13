@@ -31,8 +31,8 @@ public class calendar extends JFrame{
 	CalendarPanel calPan = new CalendarPanel();
 	AddPanel addPan = new AddPanel();
 	InfoPanel infoPan = new InfoPanel();
-//	Schedule sd[] = new Schedule[100];  // 스케줄의 카운트 = sdCnt;
-	Vector<Schedule> vSd = new Vector<>(100);
+	//	Schedule sd[] = new Schedule[100];  // 스케줄의 카운트 = sdCnt;
+	Vector<Schedule> vSd = new Vector<Schedule>(100);
 	Schedule targetSchedule = null;
 
 	final int frameWidth = 1200;
@@ -164,13 +164,14 @@ public class calendar extends JFrame{
 			content = s;
 		}
 		public String toString () {
-			return getContent();
+			String str = year + "." + month + "." + day + "/ " + hour + "시/ " + content;
+			return str;
 		}
 
 	}
 
 	private class InfoPanel extends JPanel {
-		JList list = new JList();
+		JList list = new JList(vSd);
 		JPanel contentPane = new JPanel();
 		public InfoPanel() {
 			setBorder(BorderFactory.createTitledBorder("Schedule"));
@@ -179,7 +180,7 @@ public class calendar extends JFrame{
 			setBackground(new Color(95, 216, 250));
 
 			add(new ScrollPane().add(list)).setBackground(new Color(151, 234, 244));
-			list.setOpaque(true);
+//			add(list);
 
 			/*
 			 * list.addListSelectionListener(new ListSelectionListener() {
@@ -191,9 +192,9 @@ public class calendar extends JFrame{
 				}
 			});
 			 * */
-			
-		//	vSd.addElement(new Schedule(2017, 11 , 5, 10, "윈프 과제"));
-			
+
+			vSd.addElement(new Schedule(2017, 11 , 5, 10, "윈프 과제"));
+
 			list.updateUI();
 			//        addComponent(contentPane, list, 1100, ipHeight/2 - 10/2,100,10);
 		}
@@ -232,12 +233,14 @@ public class calendar extends JFrame{
 			calendarPanel = new JPanel();
 			changePanel = new JPanel();
 			datePanel = new JPanel();
+			
+			changePanel.setLayout(new GridLayout(1,6));
 
 			jcalendar = new JCalendar();
 			//        dateList = new ArrayList<JLabel>();
 			dateList = new ArrayList<JButton>();
 
-			calendarPanel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), "Java Calendar"));
+			calendarPanel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), "Calendar"));
 			calendarPanel.setLayout(new BorderLayout());
 
 			//        SpinnerModel yearModel = new SpinnerNumberModel(jcalendar.getYear(), jcalendar.getYear()-100, jcalendar.getYear()+100, 1);
@@ -261,9 +264,12 @@ public class calendar extends JFrame{
 
 			yearLa = new JLabel(Integer.toString(jcalendar.getYear()));
 			changePanel.add(yearLa);
+			yearLa.setHorizontalAlignment(SwingConstants.CENTER);
 			monthLa = new JLabel(Integer.toString(jcalendar.getMonth()));
 			changePanel.add(monthLa);
-
+			monthLa.setHorizontalAlignment(SwingConstants.CENTER);
+			
+			
 			//        changeMonth.setPreferredSize(new Dimension(60, 22));
 			//        changePanel.add(changeYear);
 			//        changePanel.add(changeMonth);
@@ -296,6 +302,7 @@ public class calendar extends JFrame{
 				JButton button = addJButton("", null);
 				dateList.add(button);
 				datePanel.add(button);
+				button.setEnabled(false);
 			}
 
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
@@ -308,7 +315,7 @@ public class calendar extends JFrame{
 							if(isSameDate(jcalendar.getYear(), jcalendar.getMonth(), Integer.parseInt(b.getText()), 
 									vSd.elementAt(j).getYear(), vSd.elementAt(j).getMonth(), vSd.elementAt(j).getDay())) {
 								String str = vSd.elementAt(j).getHour() + "시/ " + vSd.elementAt(j).getContent();
-//								infoPan.vListData.add(str);
+								//								infoPan.vListData.add(str);
 								System.out.println(str);
 							}
 						}
@@ -318,9 +325,9 @@ public class calendar extends JFrame{
 							System.out.println(str);
 						}
 						System.out.println("----------------------------------------------------");
-						
 
-							/*
+
+						/*
                    if(Integer.parseInt(b.getText()) == sd[j].getDay())
                        if(jcalendar.getMonth() == sd[j].getMonth())
                          if(jcalendar.getYear() == sd[j].getYear()) {
@@ -328,11 +335,12 @@ public class calendar extends JFrame{
                              infoPan.vListData.add(str);
                              System.out.println(str);
                          }
-							 */
+						 */
 					}
 				});
 				dateList.add(button);
 				datePanel.add(button); 
+				button.setEnabled(true);
 			}
 
 			int afterEmpty = 42 - jcalendar.getLastday() - jcalendar.getFirstdayOfWeek();
@@ -340,6 +348,7 @@ public class calendar extends JFrame{
 				JButton button = addJButton("", null);
 				dateList.add(button);
 				datePanel.add(button);
+				button.setEnabled(false);
 			}
 
 			/*
@@ -453,14 +462,17 @@ public class calendar extends JFrame{
 
 			for (int i = 0; i < jcalendar.getFirstdayOfWeek(); i++) {
 				dateList.get(i).setText("");
+				dateList.get(i).setEnabled(false);
 			}
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setText(i + 1 + "");
+				dateList.get(jcalendar.getFirstdayOfWeek() + i).setEnabled(true);
 			}
 			int afterEmpty = jcalendar.getFirstdayOfWeek() + jcalendar.getLastday();
 			int last = dateList.size() - afterEmpty;
 			for (int i = 0; i < last; i++) {
 				dateList.get(afterEmpty + i).setText("");
+				dateList.get(afterEmpty + i).setEnabled(false);
 			}
 
 			setWeekend();
@@ -626,7 +638,7 @@ public class calendar extends JFrame{
 			}
 		}
 
-		private AddPanel() {    
+		private AddPanel() {
 			Schedule temp = new Schedule();
 			setBorder(BorderFactory.createTitledBorder("Memo"));
 			setOpaque(true);
@@ -668,7 +680,7 @@ public class calendar extends JFrame{
 						vSd.addElement(new Schedule(temp));
 						String str = vSd.elementAt(vSd.size() - 1).getYear() + "." + vSd.elementAt(vSd.size() - 1).getMonth() + "." + vSd.elementAt(vSd.size() - 1).getDay() + "/" + vSd.elementAt(vSd.size() - 1).getHour() + "/" + vSd.elementAt(vSd.size() - 1).getContent();
 						System.out.println("This: " + str);
-//						infoPan.vListData.addElement(str);
+						//						infoPan.vListData.addElement(str);
 						infoPan.list.updateUI();
 						sdCnt++;
 
@@ -728,15 +740,9 @@ public class calendar extends JFrame{
 
 	public void deleteSchedule(int y, int m, int d) {
 		for(int i = 0 ; i < vSd.size() ; i++) {
-			if(isSameDate(y, m, d, vSd.elementAt(vSd.size() - 1).getYear(), vSd.elementAt(vSd.size() - 1).getMonth(), vSd.elementAt(vSd.size() - 1).getDay())) {
-				Vector<Schedule> newSd = new Vector<>(vSd.size());
-				for(int j = 0 ; j < i ; j++) {
-					newSd.addElement(vSd.elementAt(j));
-				}
-				for(int j = i ; j < newSd.size(); j++) {
-					newSd.addElement(vSd.elementAt(j + 1));
-				}
-				vSd = newSd;
+			Schedule sc = vSd.elementAt(i);
+			if(isSameDate(y, m, d, sc.getYear(), sc.getMonth(), sc.getDay())) {
+				vSd.removeElementAt(i);
 				return;
 			}
 		}
