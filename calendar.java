@@ -47,11 +47,12 @@ public class calendar extends JFrame{
 	boolean bigMode = true; // addPan이 큰 상태면 true, 작은 상태면 false
 
 	public calendar() {
-		setTitle("Calendar Frame");
+		setTitle("내 마음속에 저장~♥");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		makeGUI();
 
+		setResizable(false);
 		setVisible(true);
 		setSize(frameWidth, frameHeight);
 	}
@@ -73,7 +74,7 @@ public class calendar extends JFrame{
 				sInfoPan.setVisible(false);
 			}
 		});
-		
+
 		addMouseMotionListener(new MouseMotionAdapter() {
 			Point start;
 			public void mouseMoved(MouseEvent e) {
@@ -180,11 +181,10 @@ public class calendar extends JFrame{
 			add(new JScrollPane(list));
 			list.setBackground(new Color(151, 234, 244));
 
-
-			list.addListSelectionListener(new ListSelectionListener() {
-				public void valueChanged(ListSelectionEvent e) {
+			list.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
 					Schedule sc = (Schedule) list.getSelectedValue();
-					if(!e.getValueIsAdjusting()) {
+					if(list.getSelectedIndex() > -1){
 						targetSchedule = sc;
 						addPan.timeTf.setText(Integer.toString(sc.hour));
 						addPan.contTa.setText(sc.content);
@@ -212,15 +212,16 @@ public class calendar extends JFrame{
 			sList.setBackground(new Color(31, 234, 244));
 
 			todayVector();
-			
-			sList.addListSelectionListener(new ListSelectionListener() {
-				public void valueChanged(ListSelectionEvent e) {
+
+			sList.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
 					Schedule sc = (Schedule) sList.getSelectedValue();
-					if(!e.getValueIsAdjusting()) {
+					if(sList.getSelectedIndex() > -1){
 						targetSchedule = sc;
 						addPan.timeTf.setText(Integer.toString(sc.hour));
 						addPan.contTa.setText(sc.content);
 					}
+					sList.updateUI();
 				}
 			});
 
@@ -232,7 +233,7 @@ public class calendar extends JFrame{
 			today.setMonth(calPan.jcalendar.getMonth());
 			today.setDay(calPan.jcalendar.getDay());
 			setBorder(BorderFactory.createTitledBorder(convertDate(today)/100 + " Schedule"));
-			
+
 			vSubSd.removeAllElements();
 			for(int i = 0 ; i < vSd.size() ; i++) {
 				if(convertDate(vSd.elementAt(i))/100 == convertDate(today)/100) {
@@ -362,7 +363,11 @@ public class calendar extends JFrame{
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JButton b = (JButton)e.getSource();
-					jcalendar.setDay(Integer.parseInt(b.getText()));
+					String strDay = b.getText();
+					if (strDay.indexOf("*") == 0)
+						strDay = strDay.substring(1);
+
+					jcalendar.setDay(Integer.parseInt(strDay));
 					for(int j = 0 ; j < vSd.size() ; j++) {
 						Schedule tempSd = new Schedule(jcalendar.getYear(), jcalendar.getMonth(), jcalendar.getDay());
 						if(convertDate(tempSd)/100 == convertDate(vSd.elementAt(j))/100) {
@@ -549,11 +554,6 @@ public class calendar extends JFrame{
 					int w = addPan.getWidth();
 					int h = addPan.getHeight();
 
-					timeLa.setVisible(false);
-					contLa.setVisible(false);
-					timeTf.setVisible(false);
-					contTa.setVisible(false);
-
 					for(int i = 0 ; i <= 101 ; i++) {
 						try {
 							sleep(3);
@@ -694,6 +694,11 @@ public class calendar extends JFrame{
 					else {
 						available = 1;
 					}
+
+					timeLa.setVisible(false);
+					contLa.setVisible(false);
+					timeTf.setVisible(false);
+					contTa.setVisible(false);
 				}
 
 				public void mouseReleased(MouseEvent e) {
@@ -711,12 +716,17 @@ public class calendar extends JFrame{
 						temp.setYear(calPan.jcalendar.getYear());
 						temp.setMonth(calPan.jcalendar.getMonth());
 						temp.setDay(searchDay(temX, temY));
-						if(searchDay(temX, temY) == 0)
+						if(searchDay(temX, temY) == 0) {
+							// 제자리로 돌아가는 애니메이션
+							new Anim_Shift().start(); 
+							// 투명도 설정 (불투명하게)
+							setTransparent(addPan, 255);
 							return;
+						}
 
 						insertSchedule(new Schedule(temp));
-
 						tInfoPan.list.updateUI();
+						sInfoPan.sList.updateUI();
 
 						timeTf.setText("");
 						contTa.setText("");
@@ -733,6 +743,11 @@ public class calendar extends JFrame{
 						addPan.setLocation(apx, apy);
 
 						deleteSchedule();
+
+						timeLa.setVisible(true);
+						contLa.setVisible(true);
+						timeTf.setVisible(true);
+						contTa.setVisible(true);
 						setTransparent(addPan, 255);
 					}
 					else if ((temX >= ipx && temX <= ipx + ipWidth) && (temY >= ipy && temY <= ipy + ipHeight)) {
@@ -741,10 +756,19 @@ public class calendar extends JFrame{
 						addPan.setLocation(apx, apy);
 
 						modifySchedule();
+
+						timeLa.setVisible(true);
+						contLa.setVisible(true);
+						timeTf.setVisible(true);
+						contTa.setVisible(true);
 						setTransparent(addPan, 255);
 					}
 					else {
-						System.out.println("예상하지 못한 결과");
+						// 제자리로 돌아가는 애니메이션
+						new Anim_Shift().start(); 
+
+						// 투명도 설정 (불투명하게)
+						setTransparent(addPan, 255);
 					}
 					addPan.updateUI();
 				}
@@ -797,10 +821,17 @@ public class calendar extends JFrame{
 		if(targetSchedule == null)
 			return;
 
+		//		if(isEmpty(convertDate(targetSchedule)))
+		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("*" + targetSchedule.getDay());
+		//		else
+		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + targetSchedule.getDay());
+
 		vSd.remove(targetSchedule);
+		sInfoPan.sList.updateUI();
 		tInfoPan.list.updateUI();
 		addPan.timeTf.setText("");
 		addPan.contTa.setText("");
+
 	}
 
 
@@ -808,17 +839,26 @@ public class calendar extends JFrame{
 		if(targetSchedule == null)
 			return;
 
+		//		if(isEmpty(convertDate(targetSchedule)))
+		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("*" + targetSchedule.getDay());
+		//		else
+		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + targetSchedule.getDay());
+
 		targetSchedule.setHour(Integer.parseInt(addPan.timeTf.getText()));
 		targetSchedule.setContent(addPan.contTa.getText());
 		tInfoPan.list.updateUI();
+		sInfoPan.sList.updateUI();
 		addPan.timeTf.setText("");
 		addPan.contTa.setText("");
 	}
 
-	public boolean isSameDate(int y1, int m1, int d1, int y2, int m2, int d2) {
-		if(y1 == y2 && m1 == m2 && d1 == d2)
-			return true;
-		return false;
+	public boolean isEmpty(int date) {
+		for(int i = 0 ; i < vSd.size(); i++) {
+			if(convertDate(vSd.elementAt(i))/100 == date/100) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void addComponent(Container container,Component c,int x,int y,int width,int height)
@@ -828,6 +868,11 @@ public class calendar extends JFrame{
 	}
 
 	private void insertSchedule(Schedule sd) {
+		//		if(isEmpty(convertDate(sd)))
+		//			calPan.dateList.get(sd.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("*" + sd.getDay());
+		//		else
+		//			calPan.dateList.get(sd.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + sd.getDay());
+
 		if (vSd.size() != 0) {
 			for(int i = 0 ; i < vSd.size() ; i++) {
 				if(convertDate(sd) < convertDate(vSd.elementAt(i))) {
