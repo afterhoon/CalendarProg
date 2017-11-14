@@ -8,6 +8,8 @@ import java.util.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 
+import java.io.*;
+
 public class calendar extends JFrame{
 
 	///////// TEST ///////
@@ -71,7 +73,7 @@ public class calendar extends JFrame{
 		addComponent(contentPane, calPan, cpx, cpy, cpWidth, cpHeight);
 
 		addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 				tInfoPan.setVisible(true);
 				sInfoPan.setVisible(false);
 			}
@@ -906,6 +908,10 @@ public class calendar extends JFrame{
 		date += sd.getDay() * 100;
 		date += sd.getHour();
 		return date;
+	}
+	
+	public int saveDate() {
+		
 	}
 
 	public static void main(String[] args) {
