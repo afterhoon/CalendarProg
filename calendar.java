@@ -1,3 +1,5 @@
+package calender;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -723,8 +725,21 @@ public class calendar extends JFrame{
 							setTransparent(addPan, 255);
 							return;
 						}
-
+						
 						insertSchedule(new Schedule(temp));
+						
+						/*
+						 * if(targetSchedule == null) {
+							insertSchedule(new Schedule(temp));
+						}
+						else {
+							modifySchedule();
+							targetSchedule.setYear(calPan.jcalendar.getYear());
+							targetSchedule.setMonth(calPan.jcalendar.getMonth());
+							targetSchedule.setDay(searchDay(temX, temY));
+						}
+						 * */
+						
 						tInfoPan.list.updateUI();
 						sInfoPan.sList.updateUI();
 
@@ -831,7 +846,6 @@ public class calendar extends JFrame{
 		tInfoPan.list.updateUI();
 		addPan.timeTf.setText("");
 		addPan.contTa.setText("");
-
 	}
 
 
@@ -843,9 +857,10 @@ public class calendar extends JFrame{
 		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("*" + targetSchedule.getDay());
 		//		else
 		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + targetSchedule.getDay());
-
+		
 		targetSchedule.setHour(Integer.parseInt(addPan.timeTf.getText()));
 		targetSchedule.setContent(addPan.contTa.getText());
+		
 		tInfoPan.list.updateUI();
 		sInfoPan.sList.updateUI();
 		addPan.timeTf.setText("");
