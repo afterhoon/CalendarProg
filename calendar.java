@@ -1,4 +1,3 @@
-package calender;
 
 import java.awt.*;
 import javax.swing.*;
@@ -15,7 +14,10 @@ public class calendar extends JFrame{
 	///////// TEST ///////
 	JLabel testLa = new JLabel("(x,y)");
 	/////////////////////
-
+	
+	Color color[] = { new Color(102, 0, 255), new Color(102, 51, 255), new Color(102, 102, 255)
+			, new Color(102, 153, 255), new Color(102, 204, 255), new Color(102, 255, 255) };
+	
 	Vector<Schedule> vSd = new Vector<Schedule>();
 	JPanel contentPane = new JPanel();
 	CalendarPanel calPan = new CalendarPanel();
@@ -49,7 +51,7 @@ public class calendar extends JFrame{
 	int apMoveWidth = 100;
 	int apMoveHeight = 50;
 	boolean bigMode = true; // addPan이 큰 상태면 true, 작은 상태면 false
-
+	
 	public calendar() {
 		setTitle("내 마음속에 저장~♥");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,6 +66,12 @@ public class calendar extends JFrame{
 	private void makeGUI() {
 		contentPane = (JPanel)this.getContentPane();
 		contentPane.setLayout(null);
+		
+		loadDate();
+		contentPane.setOpaque(true);
+		contentPane.setBackground(Color.WHITE);
+		for(int i = 0 ; i < vSd.size() ; i++)
+			System.out.println(vSd.elementAt(i).toString());
 
 		addComponent(contentPane, testLa, 600, 5, 200, 25);
 		addComponent(contentPane, addPan, apx, apy, apWidth, apHeight);
@@ -180,10 +188,10 @@ public class calendar extends JFrame{
 			setBorder(BorderFactory.createTitledBorder("Schedule"));
 			setLayout(new BorderLayout());
 			setContentPane(contentPane);
-			setBackground(new Color(95, 216, 250));
+			setBackground(color[3]);
 
 			add(new JScrollPane(list));
-			list.setBackground(new Color(151, 234, 244));
+			list.setBackground(color[4]);
 
 			list.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
@@ -210,7 +218,7 @@ public class calendar extends JFrame{
 			setVisible(false);
 			setLayout(new BorderLayout());
 			setContentPane(contentPane);
-			setBackground(new Color(5, 166, 250));
+			setBackground(color[0]);
 
 			add(new JScrollPane(sList));
 			sList.setBackground(new Color(31, 234, 244));
@@ -266,9 +274,6 @@ public class calendar extends JFrame{
 		JLabel monthLa;
 
 		public CalendarPanel() {
-			setOpaque(true);
-			setBackground(Color.BLUE);
-			setBounds(300, 400, 500, 700);
 			setLayout(new BorderLayout());
 
 
@@ -276,19 +281,27 @@ public class calendar extends JFrame{
 			calendarPanel = new JPanel();
 			changePanel = new JPanel();
 			datePanel = new JPanel();
-
+			
+			calendarPanel.setOpaque(true);
+			calendarPanel.setBackground(Color.WHITE);
+			changePanel.setOpaque(true);
+			changePanel.setBackground(Color.WHITE);
+			datePanel.setOpaque(true);
+			datePanel.setBackground(Color.WHITE);
+			
 			changePanel.setLayout(new GridLayout(1,6));
 
 			jcalendar = new JCalendar();
 			dateList = new ArrayList<JButton>();
 
-			calendarPanel.setBorder(new TitledBorder(new BevelBorder(BevelBorder.RAISED), "Calendar"));
+			calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
 			calendarPanel.setLayout(new BorderLayout());
 
 			String[] month = new String[12];
 			for (int i = 0; i < month.length; i++) {
 				month[i] = i + 1 + "월";
 			}
+			
 			lYearBut = new JButton("<<");
 			changePanel.add(lYearBut);
 			lMonBut = new JButton("<");
@@ -318,22 +331,22 @@ public class calendar extends JFrame{
 			datePanel.setLayout(new GridLayout(7, 7));  
 			String[] dayOfWeekName = {"일", "월", "화", "수", "목", "금", "토"};  
 			for (int i = 0; i < dayOfWeekName.length; i++) {
-				datePanel.add(addJLabel(dayOfWeekName[i], Color.WHITE));
-			}  
-
+				datePanel.add(addJLabel(dayOfWeekName[i], color[1]));
+			}
+			
 			if (jcalendar.getFirstdayOfWeek() == 0) {
 				jcalendar.setFirstdayOfWeek(7);
 			}
 
 			for (int i = 0; i < jcalendar.getFirstdayOfWeek(); i++) {
-				JButton button = addJButton("", null);
+				JButton button = addJButton("", color[2]);
 				dateList.add(button);
 				datePanel.add(button);
 				button.setEnabled(false);
 			}
 
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
-				JButton button = addJButton(i + 1 + "", null);
+				JButton button = addJButton(i + 1 + "", color[3]);
 				dateList.add(button);
 				datePanel.add(button); 
 				button.setEnabled(true);
@@ -341,7 +354,7 @@ public class calendar extends JFrame{
 
 			int afterEmpty = 42 - jcalendar.getLastday() - jcalendar.getFirstdayOfWeek();
 			for (int i = 0; i < afterEmpty; i++) {
-				JButton button = addJButton("", null);
+				JButton button = addJButton("", color[2]);
 				dateList.add(button);
 				datePanel.add(button);
 				button.setEnabled(false);
@@ -442,16 +455,19 @@ public class calendar extends JFrame{
 			for (int i = 0; i < jcalendar.getFirstdayOfWeek(); i++) {
 				dateList.get(i).setText("");
 				dateList.get(i).setEnabled(false);
+				dateList.get(i).setBackground(new Color(151, 234, 244));
 			}
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setText(i + 1 + "");
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setEnabled(true);
+				dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(Color.WHITE);
 			}
 			int afterEmpty = jcalendar.getFirstdayOfWeek() + jcalendar.getLastday();
 			int last = dateList.size() - afterEmpty;
 			for (int i = 0; i < last; i++) {
 				dateList.get(afterEmpty + i).setText("");
 				dateList.get(afterEmpty + i).setEnabled(false);
+				dateList.get(afterEmpty + i).setBackground(new Color(151, 234, 244));
 			}
 
 			setWeekend();
@@ -728,19 +744,13 @@ public class calendar extends JFrame{
 							return;
 						}
 						
-						insertSchedule(new Schedule(temp));
 						
-						/*
-						 * if(targetSchedule == null) {
+						if(targetSchedule == null) {
 							insertSchedule(new Schedule(temp));
 						}
 						else {
-							modifySchedule();
-							targetSchedule.setYear(calPan.jcalendar.getYear());
-							targetSchedule.setMonth(calPan.jcalendar.getMonth());
-							targetSchedule.setDay(searchDay(temX, temY));
-						}
-						 * */
+							shiftSchedule(searchDay(temX, temY));
+						}						
 						
 						tInfoPan.list.updateUI();
 						sInfoPan.sList.updateUI();
@@ -788,6 +798,7 @@ public class calendar extends JFrame{
 						setTransparent(addPan, 255);
 					}
 					addPan.updateUI();
+					saveDate();
 				}
 			});
 
@@ -844,6 +855,8 @@ public class calendar extends JFrame{
 		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + targetSchedule.getDay());
 
 		vSd.remove(targetSchedule);
+		sInfoPan.todayVector();
+		
 		sInfoPan.sList.updateUI();
 		tInfoPan.list.updateUI();
 		addPan.timeTf.setText("");
@@ -863,10 +876,26 @@ public class calendar extends JFrame{
 		targetSchedule.setHour(Integer.parseInt(addPan.timeTf.getText()));
 		targetSchedule.setContent(addPan.contTa.getText());
 		
+		insertSchedule(new Schedule(targetSchedule));
+		deleteSchedule();
+		
+		sInfoPan.todayVector();
 		tInfoPan.list.updateUI();
 		sInfoPan.sList.updateUI();
 		addPan.timeTf.setText("");
 		addPan.contTa.setText("");
+	}
+	
+	public void shiftSchedule(int day) {
+		if(targetSchedule == null)
+			return;
+		
+		targetSchedule.setYear(calPan.jcalendar.getYear());
+		targetSchedule.setMonth(calPan.jcalendar.getMonth());
+		targetSchedule.setDay(day);
+		
+		insertSchedule(new Schedule(targetSchedule));
+		deleteSchedule();
 	}
 
 	public boolean isEmpty(int date) {
@@ -910,7 +939,59 @@ public class calendar extends JFrame{
 		return date;
 	}
 	
-	public int saveDate() {
+	public void loadDate() {
+		try {
+			FileReader in = new FileReader("date.txt");
+			int c;
+			int cnt = 0;
+			int y, m, d, h;
+			String date = new String();
+			String cont = new String();
+			Schedule temp;
+			while((c = in.read()) != -1) {
+				if(cnt < 10) {
+					date = date + (char)c;
+					cnt++;
+				}
+				else {
+					if(c == '/') {
+						temp = new Schedule();
+						int dt = Integer.parseInt(date);
+						h = dt % 100;
+						d = (dt % 10000 - h) / 100;
+						m = (dt % 1000000 - h - d) / 10000;
+						y = dt / 1000000;
+						temp.setYear(y);
+						temp.setMonth(m);
+						temp.setDay(d);
+						temp.setHour(h);
+						temp.setContent(cont);
+						System.out.println(temp.getDay() + "/ " + temp.getContent());
+						vSd.addElement(temp);
+						
+						cnt = 0;
+						date = "";
+						cont = "";
+						continue;
+					}
+					cont = cont + (char)c;
+				}
+			}
+			
+			in.close();
+		} catch(Exception e) { }
+		
+	}
+	
+	public void saveDate() {
+		try {
+			FileWriter out = new FileWriter("date.txt");
+			for(int i = 0 ; i < vSd.size(); i++) {
+				String str = convertDate(vSd.elementAt(i)) + vSd.elementAt(i).getContent() + "/";
+				out.write(str);
+			}
+			out.close();
+		} catch(Exception e) { }
 		
 	}
 
