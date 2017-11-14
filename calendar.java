@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -106,18 +105,20 @@ public class calendar extends JFrame{
 		private int month = 0;
 		private int day = 0;
 		private int hour = 99;
+		private int state = 0;
 		private String content = "";
 
 		Schedule() {
 
 		}
 
-		Schedule(int y, int m, int d, int h, String s) {
+		Schedule(int y, int m, int d, int h, String s, int st) {
 			year = y;
 			month = m;
 			day = d;
 			hour = h;
 			content = s;
+			state=st;
 		}
 
 		Schedule(int y, int m, int d) {
@@ -169,10 +170,15 @@ public class calendar extends JFrame{
 		public void setHour(int h) {
 			hour = h;
 		}
+		
+		public void setState(int st){
+			state=st;
+		}
 
 		public void setContent(String s) {
 			content = s;
 		}
+		
 		public String toString () {
 			String str = year + "." + month + "." + day + "/ " + hour + "시/ " + content;
 			return str;
@@ -460,7 +466,10 @@ public class calendar extends JFrame{
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setText(i + 1 + "");
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setEnabled(true);
-				dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(Color.WHITE);
+				switch(isEmpty(convertDate(new Schedule(jcalendar.getYear(), jcalendar.getMonth(), jcalendar.getFirstdayOfWeek() + i)))) {
+					case 0: dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(Color.WHITE);
+					case 1: dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(Color.RED);
+				}
 			}
 			int afterEmpty = jcalendar.getFirstdayOfWeek() + jcalendar.getLastday();
 			int last = dateList.size() - afterEmpty;
@@ -700,6 +709,10 @@ public class calendar extends JFrame{
 						hour = -1;
 					}
 					cont = contTa.getText();
+					
+					int st=findDayState(cont);
+					temp.setState(st);
+					
 					// 투명도 설정
 					setTransparent(addPan, 100);
 
@@ -750,7 +763,7 @@ public class calendar extends JFrame{
 						}
 						else {
 							shiftSchedule(searchDay(temX, temY));
-						}						
+						}
 						
 						tInfoPan.list.updateUI();
 						sInfoPan.sList.updateUI();
@@ -798,6 +811,8 @@ public class calendar extends JFrame{
 						setTransparent(addPan, 255);
 					}
 					addPan.updateUI();
+					
+					
 					saveDate();
 				}
 			});
@@ -814,6 +829,16 @@ public class calendar extends JFrame{
 				}  
 			});
 
+		}
+		
+		private int findDayState(String st){
+			if(st.matches(".*생일.*") && st.matches(".*중요.*")){
+				return 4;
+			}else if(st.matches(".*생일.*")){
+				return 3;
+			}else if(st.matches(".*중요.*")){
+				return 2;
+			}else return 0;
 		}
 
 		private int searchDay(int x, int y) {
@@ -867,12 +892,7 @@ public class calendar extends JFrame{
 	public void modifySchedule() {
 		if(targetSchedule == null)
 			return;
-
-		//		if(isEmpty(convertDate(targetSchedule)))
-		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("*" + targetSchedule.getDay());
-		//		else
-		//			calPan.dateList.get(targetSchedule.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + targetSchedule.getDay());
-		
+			
 		targetSchedule.setHour(Integer.parseInt(addPan.timeTf.getText()));
 		targetSchedule.setContent(addPan.contTa.getText());
 		
@@ -898,13 +918,16 @@ public class calendar extends JFrame{
 		deleteSchedule();
 	}
 
-	public boolean isEmpty(int date) {
-		for(int i = 0 ; i < vSd.size(); i++) {
-			if(convertDate(vSd.elementAt(i))/100 == date/100) {
-				return false;
+	public int isEmpty(int date) {
+		if(vSd.size() > 0) {
+			for(int i = 0 ; i < vSd.size(); i++) {
+				if(convertDate(vSd.elementAt(i))/100 == date/100) {
+					System.out.println(convertDate(vSd.elementAt(i))/100 + " / " + date/100);
+					return 1;
+				}
 			}
 		}
-		return true;
+		return 0;
 	}
 
 	private void addComponent(Container container,Component c,int x,int y,int width,int height)
@@ -914,11 +937,6 @@ public class calendar extends JFrame{
 	}
 
 	private void insertSchedule(Schedule sd) {
-		//		if(isEmpty(convertDate(sd)))
-		//			calPan.dateList.get(sd.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("*" + sd.getDay());
-		//		else
-		//			calPan.dateList.get(sd.getDay() + calPan.jcalendar.getFirstdayOfWeek() - 1).setText("" + sd.getDay());
-
 		if (vSd.size() != 0) {
 			for(int i = 0 ; i < vSd.size() ; i++) {
 				if(convertDate(sd) < convertDate(vSd.elementAt(i))) {
