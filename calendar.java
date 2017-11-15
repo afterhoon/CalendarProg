@@ -71,6 +71,7 @@ public class calendar extends JFrame{
 	}
 
 	private void initData() {
+		font = (new JButton()).getFont();
 		jcalendar = new JCalendar();
 		vSd = new Vector<Schedule>();
 		loadDate();
@@ -131,7 +132,7 @@ public class calendar extends JFrame{
 		addComponent(contentPane, sInfoPan, ipx, ipy, ipWidth, ipHeight);
 		sInfoPan.setVisible(false);
 		addComponent(contentPane, calPan, cpx, cpy, cpWidth, cpHeight);
-		addComponent(contentPane, timeLabel, 550, 5, 200, 25);
+		addComponent(contentPane, timeLabel, 930, 725, 300, 25);
 		
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -368,9 +369,11 @@ public class calendar extends JFrame{
 			changePanel.add(lMonBut).setBackground(paint[21]);
 
 			yearLa = new JLabel(Integer.toString(jcalendar.getYear()));
+			yearLa.setFont(new Font(font.getFontName(),font.getStyle(), font.getSize() + 10));
 			changePanel.add(yearLa);
 			yearLa.setHorizontalAlignment(SwingConstants.CENTER);
 			monthLa = new JLabel(Integer.toString(jcalendar.getMonth()));
+			monthLa.setFont(new Font(font.getFontName(),font.getStyle(), font.getSize() + 10));
 			changePanel.add(monthLa);
 			monthLa.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -407,7 +410,6 @@ public class calendar extends JFrame{
 				button.setEnabled(false);
 			}
 
-			font = (new JButton()).getFont();
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
 				JButton button = null;
 				switch(importance(new Schedule(jcalendar.getYear(), jcalendar.getMonth(), i + 1))) {
@@ -489,6 +491,7 @@ public class calendar extends JFrame{
 				label.setOpaque(true);
 				label.setBackground(bgColor);
 				label.setForeground(fgColor);
+				label.setFont(new Font(font.getFontName(),font.getStyle(), font.getSize() + 10));
 			}
 			return label;
 		}
@@ -539,7 +542,7 @@ public class calendar extends JFrame{
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setText(i + 1 + "");
 				dateList.get(jcalendar.getFirstdayOfWeek() + i).setEnabled(true);
 
-				switch(importance(new Schedule(jcalendar.getYear(), jcalendar.getMonth(), jcalendar.getFirstdayOfWeek() + i - 2))) {
+				switch(importance(new Schedule(jcalendar.getYear(), jcalendar.getMonth(), i + 1))) {
 				case 0: dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(paint[9]); break;
 				case 1: dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(paint[10]); break;
 				case 2: dateList.get(jcalendar.getFirstdayOfWeek() + i).setBackground(paint[11]); break;
@@ -1174,6 +1177,7 @@ public class calendar extends JFrame{
 			min = now.get(Calendar.MINUTE);
 			s = now.get(Calendar.SECOND);
 			setText(y + "." + m + "." + d + " / " + h + ":" + min + ":" + s);
+			setFont(new Font(font.getFontName(), font.getStyle(), font.getSize() + 10));
 			new TimeRefresh().start();
 		}
 	}
