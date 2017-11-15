@@ -1,31 +1,10 @@
-     ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+2017년도 2학기 윈도우 프로그래밍 프로젝트
+캘린더 프로그램 제작 레포트
 
-
-Hi there! Welcome to Cloud9 IDE!
-
-To get you started with C/C++, we have created some small hello world
-applications and a Makefile.
-
-Have a look at the files, and use the terminal to build them:
-
-    $ make
-    $ ./hello-c-world
-    $ ./hello-cpp-world
-
-We're sure you can take it from there. Go ahead and edit the code, 
-or add some new files. It's all up to you! 
-
-Happy coding!
-The Cloud9 IDE team
-
-
-## Support & Documentation
-
-Visit http://docs.c9.io for support, or to learn more about using Cloud9 IDE. 
-To watch some training videos, visit http://www.youtube.com/user/c9ide
-# CalendarProg
+  *작 품 명 : 내 마음속에 저장
+  *과 목 명 : 윈도우 프로그래밍
+  *담당교수 : 강대욱 교수님
+  *학    과 : 소프트웨어공학전공
+  *조 번 호 : 1조
+  *조    원 : 강지우, 김성철, 한지훈
+  *과제일정 : 17.11.02 ~ 17.11.16
