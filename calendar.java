@@ -1018,6 +1018,10 @@ public class calendar extends JFrame{
 			if(vSd.elementAt(i).getDay() == day) {
 				if(res < vSd.elementAt(i).getState())
 					res = vSd.elementAt(i).getState();
+				else if(res == 2 && vSd.elementAt(i).getState() == 3)
+					res = 4;
+				else if(res == 3 && vSd.elementAt(i).getState() == 2)
+					res = 4;
 			}
 		}
 //		System.out.println(day + "의 state: " + res);
