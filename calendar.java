@@ -16,6 +16,7 @@ public class calendar extends JFrame{
 	
 	Color color[] = { new Color(102, 0, 255), new Color(102, 51, 255), new Color(102, 102, 255)
 			, new Color(102, 153, 255), new Color(102, 204, 255), new Color(102, 255, 255) };
+	JCalendar jcalendar;
 	
 	Vector<Schedule> vSd;
 	JPanel contentPane;
@@ -64,6 +65,7 @@ public class calendar extends JFrame{
 	}
 	
 	private void initData() {
+		jcalendar = new JCalendar();
 		vSd = new Vector<Schedule>();
 		loadDate();
 		
@@ -82,9 +84,7 @@ public class calendar extends JFrame{
 		
 		contentPane.setOpaque(true);
 		contentPane.setBackground(Color.WHITE);
-		for(int i = 0 ; i < vSd.size() ; i++)
-			System.out.println(vSd.elementAt(i).toString());
-
+		
 		addComponent(contentPane, testLa, 600, 5, 200, 25);
 		addComponent(contentPane, addPan, apx, apy, apWidth, apHeight);
 		addComponent(contentPane, tInfoPan, ipx, ipy, ipWidth, ipHeight);
@@ -118,7 +118,7 @@ public class calendar extends JFrame{
 		private int month = 0;
 		private int day = 0;
 		private int hour = 99;
-		private int state = 0;	// 0: 기본  1: 일정있음  2: 중요  3: 생일  4: 중요와 생일
+		private int state = 1;	// 0: 기본  1: 일정있음  2: 중요  3: 생일  4: 중요와 생일
 		private String content = "";
 
 		Schedule() {
@@ -236,7 +236,7 @@ public class calendar extends JFrame{
 		Vector<Schedule> vSubSd = new Vector<Schedule>();
 		JList sList = new JList(vSubSd);
 		JPanel contentPane = new JPanel();
-		Schedule today = new Schedule(calPan.jcalendar.getYear(), calPan.jcalendar.getMonth(), calPan.jcalendar.getDay());
+		Schedule today = new Schedule(jcalendar.getYear(), jcalendar.getMonth(), jcalendar.getDay());
 
 		public SubInfoPanel() {
 			setVisible(false);
@@ -265,9 +265,9 @@ public class calendar extends JFrame{
 		}
 
 		public void todayVector() {
-			today.setYear(calPan.jcalendar.getYear());
-			today.setMonth(calPan.jcalendar.getMonth());
-			today.setDay(calPan.jcalendar.getDay());
+			today.setYear(jcalendar.getYear());
+			today.setMonth(jcalendar.getMonth());
+			today.setDay(jcalendar.getDay());
 			setBorder(BorderFactory.createTitledBorder(convertDate(today)/100 + " Schedule"));
 
 			vSubSd.removeAllElements();
@@ -291,7 +291,6 @@ public class calendar extends JFrame{
 		JButton nMonBut;
 		JButton nYearBut;
 
-		JCalendar jcalendar;  //JCalendar 객체
 		ArrayList<JButton> dateList;
 
 		JLabel yearLa;
@@ -315,7 +314,6 @@ public class calendar extends JFrame{
 			
 			changePanel.setLayout(new GridLayout(1,6));
 
-			jcalendar = new JCalendar();
 			dateList = new ArrayList<JButton>();
 
 			calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
@@ -371,7 +369,7 @@ public class calendar extends JFrame{
 
 			for (int i = 0; i < jcalendar.getLastday(); i++) {
 				JButton button = null;
-				switch(vSd.elementAt(i).getState()) {
+				switch(importance(i + 1)) {
 				case 0: button = addJButton(i + 1 + "", color[5]); break;
 				case 1: button = addJButton(i + 1 + "", color[4]); break;
 				case 2: button = addJButton(i + 1 + "", Color.RED); break;
@@ -417,6 +415,7 @@ public class calendar extends JFrame{
 						strDay = strDay.substring(1);
 
 					jcalendar.setDay(Integer.parseInt(strDay));
+					/*
 					for(int j = 0 ; j < vSd.size() ; j++) {
 						Schedule tempSd = new Schedule(jcalendar.getYear(), jcalendar.getMonth(), jcalendar.getDay());
 						if(convertDate(tempSd)/100 == convertDate(vSd.elementAt(j))/100) {
@@ -424,6 +423,7 @@ public class calendar extends JFrame{
 							System.out.println(str);
 						}
 					}
+					 * */
 					sInfoPan.todayVector();
 					tInfoPan.setVisible(false);
 					sInfoPan.setVisible(true);
@@ -452,8 +452,6 @@ public class calendar extends JFrame{
 
 				int year = jcalendar.getYear();
 				int month = jcalendar.getMonth();
-
-				System.out.println(b.getText());
 
 				switch(b.getText()) {
 				case "<<": year--; break;
@@ -776,8 +774,8 @@ public class calendar extends JFrame{
 						setTransparent(addPan, 255);
 					}
 					else if((temX >= cpx && temX <= cpx + cpWidth) && (temY >= cpy && temY <= cpy + cpHeight)) {
-						temp.setYear(calPan.jcalendar.getYear());
-						temp.setMonth(calPan.jcalendar.getMonth());
+						temp.setYear(jcalendar.getYear());
+						temp.setMonth(jcalendar.getMonth());
 						temp.setDay(searchDay(temX, temY));
 						if(searchDay(temX, temY) == 0) {
 							// 제자리로 돌아가는 애니메이션
@@ -860,22 +858,12 @@ public class calendar extends JFrame{
 			});
 
 		}
-		
-		private int findDayState(String st){
-			if(st.matches(".*생일.*") && st.matches(".*중요.*")){
-				return 4;
-			}else if(st.matches(".*생일.*")){
-				return 3;
-			}else if(st.matches(".*중요.*")){
-				return 2;
-			}else return 0;
-		}
 
 		private int searchDay(int x, int y) {
 			int day = 0;
 			int calX, calY;
-			int firstDay = calPan.jcalendar.getFirstdayOfWeek();
-			int lastDay = calPan.jcalendar.getLastday();
+			int firstDay = jcalendar.getFirstdayOfWeek();
+			int lastDay = jcalendar.getLastday();
 
 			calX = (x - 40) / 98 + 1;
 			calY = (y - 90) / 90 - 1;
@@ -898,6 +886,16 @@ public class calendar extends JFrame{
 				pan.getBackground().getGreen(), 
 				pan.getBackground().getBlue(),
 				percent));
+	}
+	
+	private int findDayState(String st){
+		if(st.matches(".*생일.*") && st.matches(".*중요.*")){
+			return 4;
+		}else if(st.matches(".*생일.*")){
+			return 3;
+		}else if(st.matches(".*중요.*")){
+			return 2;
+		}else return 1;
 	}
 
 	public void deleteSchedule() {
@@ -940,8 +938,8 @@ public class calendar extends JFrame{
 		if(targetSchedule == null)
 			return;
 		
-		targetSchedule.setYear(calPan.jcalendar.getYear());
-		targetSchedule.setMonth(calPan.jcalendar.getMonth());
+		targetSchedule.setYear(jcalendar.getYear());
+		targetSchedule.setMonth(jcalendar.getMonth());
 		targetSchedule.setDay(day);
 		
 		insertSchedule(new Schedule(targetSchedule));
@@ -964,12 +962,24 @@ public class calendar extends JFrame{
 		if(vSd.size() > 0) {
 			for(int i = 0 ; i < vSd.size(); i++) {
 				if(convertDate(vSd.elementAt(i))/100 == date/100) {
-					System.out.println("대상 date: " + date + "//////-> " + convertDate(vSd.elementAt(i))/100 + " / " + date/100);
+//					System.out.println("대상 date: " + date + "//////-> " + convertDate(vSd.elementAt(i))/100 + " / " + date/100);
 					return 1;
 				}
 			}
 		}
 		return 0;
+	}
+	
+	public int importance(int day) {
+		int res = 0;
+		for(int i = 0 ; i < vSd.size(); i++) {
+			if(vSd.elementAt(1).getDay() == day) {
+				if(res < vSd.elementAt(i).getState())
+					res = vSd.elementAt(i).getState();
+			}
+		}
+		System.out.println(day + "의 state: " + res);
+		return res;
 	}
 
 	private void addComponent(Container container,Component c,int x,int y,int width,int height)
@@ -1014,8 +1024,7 @@ public class calendar extends JFrame{
 						temp.setDay(d);
 						temp.setHour(h);
 						temp.setContent(cont);
-						temp.setState(isEmpty(convertDate(new Schedule(calPan.jcalendar.getYear(), jcalendar.getMonth(), jcalendar.getFirstdayOfWeek() + i - 2))));
-						System.out.println(temp.getDay() + "/ " + temp.getContent());
+						temp.setState(findDayState(cont));
 						vSd.addElement(temp);
 						
 						cnt = 0;
