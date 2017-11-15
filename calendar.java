@@ -16,7 +16,7 @@ public class calendar extends JFrame{
 	
 	Color color[] = { new Color(102, 0, 255), new Color(102, 51, 255), new Color(102, 102, 255)
 			, new Color(102, 153, 255), new Color(102, 204, 255), new Color(102, 255, 255) };
-	Color[] paint = new Color[20];
+	Color[] paint = new Color[30];
 	
 	JCalendar jcalendar;
 	
@@ -58,6 +58,7 @@ public class calendar extends JFrame{
 		setTitle("내 마음속에 저장~♥");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		paintColor();
 		initData();
 		makeGUI();
 
@@ -80,33 +81,38 @@ public class calendar extends JFrame{
 	}
 	
 	private void paintColor() {
-		/*
-		00 전체배경
-01 TotalInfoPanel 바탕
-02 TotalInfoPanel 리스트
-03 SubInfoPanel 바탕
-04 SubInfoPanel 리스트
-05 CalendarPanel 바탕
-06 요일 글씨색
-07 요일 배경색
-08 날짜 아닌 곳 색
-09 일정 없는 날짜 색
-10 일정 있는 날짜 색
-11 생일인 날짜 색
-12 중요한 날짜 색
-13 생일이고 중요한 날짜 색
-14 일요일 글자 색
-15 토요일 글자 색
-16 AddPanel 배경색
-17 AddPanel 내부 색
-18 
-19 
-20 
-		 * */
-		paint[0] = Color.WHITE;
-		paint[1] = Color.WHITE;
-		paint[2] = Color.WHITE;
-		paint[3] = Color.WHITE;
+		paint[0]  = Color.WHITE;	// 전체 배경
+		
+		/* InfoPanel */
+		paint[1]  = Color.BLACK;	// TotalInfoPanel 바탕
+		paint[2]  = Color.WHITE;	// TotalInfoPanel 리스트
+		paint[3]  = Color.DARK_GRAY;// SubInfoPanel 바탕
+		paint[4]  = Color.LIGHT_GRAY;	// SubInfoPanel 리스트
+		paint[5]  = Color.WHITE;	// CalendarPanel 바탕
+		
+		/* CalendarPanel */
+		paint[18] = Color.WHITE;	// 연도 이동 버튼 글자 색
+		paint[19] = Color.BLACK;	// 연도 이동 버튼 배경 색
+		paint[20] = Color.WHITE;	// 달 이동 버튼 글자 색
+		paint[21] = Color.BLACK;	// 달 이동 버튼 배경 색
+		
+		paint[6]  = Color.WHITE;	// 요일 글씨색
+		paint[7]  = Color.BLACK;	// 요일 배경색
+		paint[14] = Color.RED;		// 일요일 글자 색
+		paint[15] = Color.BLUE;		// 토요일 글자 색
+		
+		paint[8]  = new Color(225, 225, 225);	// 날짜 아닌 곳 색
+		
+		paint[9]  = Color.WHITE;	// 일정 없는 날짜 색
+		paint[10] = Color.GREEN;	// 일정 있는 날짜 색
+		paint[11] = Color.BLUE;		// 생일인 날짜 색
+		paint[12] = Color.RED;		// 중요한 날짜 색
+		paint[13] = Color.MAGENTA;	// 생일이고 중요한 날짜 색
+		
+		/* AddPanel */
+		paint[16] = Color.YELLOW;	// AddPanel 배경색
+		paint[17] = Color.WHITE;	// AddPanel 내부 색
+
 	}
 
 	private void makeGUI() {
@@ -356,9 +362,11 @@ public class calendar extends JFrame{
 			}
 			
 			lYearBut = new JButton("<<");
-			changePanel.add(lYearBut);
+			lYearBut.setForeground(paint[18]);
+			changePanel.add(lYearBut).setBackground(paint[19]);
 			lMonBut = new JButton("<");
-			changePanel.add(lMonBut);
+			lMonBut.setForeground(paint[20]);
+			changePanel.add(lMonBut).setBackground(paint[21]);
 
 			yearLa = new JLabel(Integer.toString(jcalendar.getYear()));
 			changePanel.add(yearLa);
@@ -368,9 +376,11 @@ public class calendar extends JFrame{
 			monthLa.setHorizontalAlignment(SwingConstants.CENTER);
 
 			nMonBut = new JButton(">");
-			changePanel.add(nMonBut);
+			nMonBut.setForeground(paint[20]);
+			changePanel.add(nMonBut).setBackground(paint[21]);
 			nYearBut = new JButton(">>");
-			changePanel.add(nYearBut);
+			nYearBut.setForeground(paint[18]);
+			changePanel.add(nYearBut).setBackground(paint[19]);
 
 			lYearBut.addActionListener(new BtnListener());
 			lMonBut.addActionListener(new BtnListener());
